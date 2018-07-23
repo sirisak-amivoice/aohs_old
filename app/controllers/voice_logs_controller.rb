@@ -555,6 +555,8 @@ class VoiceLogsController < ApplicationController
      transfer_voice_logs = find_transfer_calls(voice_log_id)
 
      transfer_voice_logs.each {|vl|        
+      p "xxxxxxxxxxxxxxxxxxxx"
+      p vl
         if (not vl.nil?) and (not vl[:path].nil?) and (not vl[:id].nil?)
           vl[:path] = Base64.encode64(vl[:path])
           vl[:path] = encrypt(vl[:path], vl[:id])
