@@ -247,7 +247,6 @@ class VoiceLogsController < ApplicationController
 				voice_logs = []
 			end
 
-<<<<<<< HEAD
       voice_logs.each do |vl|
         next if vl.nil?
         next if vl[:path].nil? or vl[:id].nil?
@@ -258,43 +257,6 @@ class VoiceLogsController < ApplicationController
 			@voice_logs_ds = {:data => voice_logs, :page_info => page_info,:summary => summary }			
 	end
   
-=======
-      voice_logs.each {|vl|        
-        if (not vl.nil?) and (not vl[:path].nil?) and (not vl[:id].nil?)
-          vl[:path] = Base64.encode64(vl[:path])
-          vl[:path] = encrypt(vl[:path], vl[:id])
-        end
-      }
-
-			@voice_logs_ds = {:data => voice_logs, :page_info => page_info,:summary => summary }
-			
-	end
-
-  def encrypt(strIn,key)
-    strOut = strIn.clone
-
-    toInsert = []
-    n=0
-    while true
-        nn=n*(n+1)/2
-        if nn < strIn.length
-          toInsert.push(nn)
-          n = n+1
-        else
-            break
-        end
-    end
-
-    key_arr = key.to_s.scan(/./)
-    toInsert.each_with_index { |pos,idx|
-      str2insert = if str2insert.nil? then "0" else key_arr[idx] end
-      strOut.insert(pos,str2insert)
-    }
-
-    strOut
-  end
-
->>>>>>> 8a5dd4b11c5a12382fe1b364eba08d887ec703c4
 	def index
     
 			@cd_color = Aohs::CALL_DIRECTION_COLORS
