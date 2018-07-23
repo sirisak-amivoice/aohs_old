@@ -20,6 +20,7 @@ class ApplicationController < ActionController::Base
     AmiTool.switch_table_voice_logs
     
   end
+<<<<<<< HEAD
   
   def valid_sql_injection
     ctls_names = [
@@ -35,11 +36,28 @@ class ApplicationController < ActionController::Base
         # perform check
         if found_sql_injection?(kname, val)
           render :status => 400
+=======
+
+  def valid_sql_injection
+    if [
+          'voice_logs','customer','customers','keywords',
+          'statistics','favorites','call_tags','agents',
+          'bookmark','call_browser','event'
+        ].include?(controller_name.to_s)
+      params.each do |kname,val|
+        next if ['controller','action'].include?(kname)
+        next if val.blank?
+
+        # perform check
+        if found_sql_injection?(val)
+          render :status => 500
+>>>>>>> 8a5dd4b11c5a12382fe1b364eba08d887ec703c4
         end
       end
     end
   end
   
+<<<<<<< HEAD
   def found_sql_injection?(kname, val)
     txt = val.to_s.chomp.strip
     regexp = /\b(OR|AND|ALTER|CREATE|DELETE|DROP|EXEC(UTE){0,1}|INSERT( +INTO){0,1}|MERGE|SELECT|UPDATE|UNION( +ALL){0,1})\b/i
@@ -72,4 +90,18 @@ class ApplicationController < ActionController::Base
     return ourl
   end
   
+=======
+  def found_sql_injection?(val)
+    txt = val.to_s.chomp.strip
+
+    regexp = /\b(OR|AND|ALTER|CREATE|DELETE|DROP|EXEC(UTE){0,1}|INSERT( +INTO){0,1}|MERGE|SELECT|UPDATE|UNION( +ALL){0,1})\b/i
+
+    if txt.match(regexp)
+      return true
+    end
+
+    return false
+  end
+    
+>>>>>>> 8a5dd4b11c5a12382fe1b364eba08d887ec703c4
 end
