@@ -192,7 +192,7 @@ class CustomersController < ApplicationController
 
     voice_logs = []
     unless skip_search
-      voice_logs,summary, page_info,agents = find_customer_calls({
+      voice_logs, summary, page_info,agents = find_customer_calls({
                 :select => [],
                 :conditions => conditions,
                 :order => orders,
@@ -204,6 +204,13 @@ class CustomersController < ApplicationController
                 :ctrl => sc})
     end
 
+    voice_logs.each do |vl|
+      next if vl.nil?
+      next if vl[:path].nil? or vl[:id].nil?
+      vl[:path] = Base64.encode64(vl[:path])
+      vl[:path] = encrypt_voice_url(vl[:path], vl[:id])
+    end
+    
     @voice_logs_ds = {:data => voice_logs, :page_info => page_info,:summary => summary }
     
   end

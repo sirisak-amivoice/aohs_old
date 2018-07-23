@@ -48,216 +48,132 @@ enaspd = $CF.get("client.aohs_web.audioViewer.showSpeed").to_i
 		}
 </style> 
 <script type="text/javascript">
-var iconMedia = {
-	enaplay: "<%=image_src_path('media_control/play.png') %>",
-	display: "<%=image_src_path('media_control/play.gif') %>",
-	enastop: "<%=image_src_path('media_control/stop.png') %>",
-	disstop: "<%=image_src_path('media_control/stop.gif') %>",
-	enapaus: "<%=image_src_path('media_control/pause.png') %>",
-	dispaus: "<%=image_src_path('media_control/pause.gif') %>",
-	enanext: "<%=image_src_path('media_control/next.png') %>",
-	disnext: "<%=image_src_path('media_control/next.gif') %>",
-	enaprev: "<%=image_src_path('media_control/previous.png') %>",
-	disprev: "<%=image_src_path('media_control/back.gif') %>"
-}
-var ctrlAmiV = {
-	currentRow: 0,
-	totalRow: 0,
-	audioSet: false,
-	speed: 0,
-	volume: 0
-}
+		var iconMedia = {
+				enaplay: "<%=image_src_path('media_control/play.png') %>",
+				display: "<%=image_src_path('media_control/play.gif') %>",
+				enastop: "<%=image_src_path('media_control/stop.png') %>",
+				disstop: "<%=image_src_path('media_control/stop.gif') %>",
+				enapaus: "<%=image_src_path('media_control/pause.png') %>",
+				dispaus: "<%=image_src_path('media_control/pause.gif') %>",
+				enanext: "<%=image_src_path('media_control/next.png') %>",
+				disnext: "<%=image_src_path('media_control/next.gif') %>",
+				enaprev: "<%=image_src_path('media_control/previous.png') %>",
+				disprev: "<%=image_src_path('media_control/back.gif') %>"
+		}
+		var ctrlAmiV = {
+				currentRow: 0,
+				totalRow: 0,
+				audioSet: false,
+				speed: 0,
+				volume: 0
+		}
       
-var AudioPlayer = {
-	isActiveX: "<%= ($CF.get('client.aohs_web.audioViewer.runMode') == 'activex') %>",
-	isPausePlaying: false,
-	isPlaying: false,
-	buttons: {
-		init: function(){
-			$("#icon-onplay").attr("src",iconMedia.display);
-			$("#icon-onpause").attr("src",iconMedia.dispaus);
-			$("#icon-onstop").attr("src",iconMedia.disstop);
-			$("#icon-onprev").attr("src",iconMedia.disprev);
-			$("#icon-onnext").attr("src",iconMedia.disnext);				
-		}, 
-		started: function(){
-			$("#icon-onplay").attr("src",iconMedia.display);
-			$("#icon-onpause").attr("src",iconMedia.enapaus);
-			$("#icon-onstop").attr("src",iconMedia.enastop); 				
-		},
-		stopped: function(){
-			$("#icon-onpause").attr("src",iconMedia.dispaus);
-			$("#icon-onstop").attr("src",iconMedia.disstop);
-			$("#icon-onplay").attr("src",iconMedia.enaplay);				
-		},
-		paused: function(){
-			$("#icon-onplay").attr("src",iconMedia.enaplay);
-			$("#icon-onstop").attr("src",iconMedia.enastop);
-			$("#icon-onpause").attr("src",iconMedia.dispaus);				
-		},
-		resumed: function(){
-			$("#icon-onplay").attr("src",iconMedia.display);
-			$("#icon-onpause").attr("src",iconMedia.enapaus);
-			$("#icon-onstop").attr("src",iconMedia.enastop);				
-		},
-		playNext: function(){
-			if((ctrlAmiV.currentRow + 1) > ctrlAmiV.totalRow){
-				 $("#icon-onnext").attr("src",iconMedia.disnext);
-			} else {
-				 $("#icon-onnext").attr("src",iconMedia.enanext);
-			}				
-		},
-		playPrev: function(){
-			if((ctrlAmiV.currentRow - 1) <= 0){
-				$("#icon-onprev").attr("src",iconMedia.disprev);
-			} else {
-				$("#icon-onprev").attr("src",iconMedia.enaprev);
-			}				
-		},
-		clear: function(){
-			$("#icon-onplay").attr("src",iconMedia.display);
-			$("#icon-onpause").attr("src",iconMedia.dispaus);
-			$("#icon-onstop").attr("src",iconMedia.disstop);				
-		}
-	}	  	
-} 
+	  var AudioPlayer = {
+				isActiveX: "<%= ($CF.get('client.aohs_web.audioViewer.runMode') == 'activex') %>",
+				isPausePlaying: false,
+				isPlaying: false,
+				buttons: {
+				init: function(){
+						$("#icon-onplay").attr("src",iconMedia.display);
+						$("#icon-onpause").attr("src",iconMedia.dispaus);
+						$("#icon-onstop").attr("src",iconMedia.disstop);
+						$("#icon-onprev").attr("src",iconMedia.disprev);
+						$("#icon-onnext").attr("src",iconMedia.disnext);				
+				}, 
+				started: function(){
+						$("#icon-onplay").attr("src",iconMedia.display);
+						$("#icon-onpause").attr("src",iconMedia.enapaus);
+						$("#icon-onstop").attr("src",iconMedia.enastop); 				
+				},
+				stopped: function(){
+						$("#icon-onpause").attr("src",iconMedia.dispaus);
+						$("#icon-onstop").attr("src",iconMedia.disstop);
+						$("#icon-onplay").attr("src",iconMedia.enaplay);				
+				},
+				paused: function(){
+						$("#icon-onplay").attr("src",iconMedia.enaplay);
+						$("#icon-onstop").attr("src",iconMedia.enastop);
+						$("#icon-onpause").attr("src",iconMedia.dispaus);				
+				},
+				resumed: function(){
+						$("#icon-onplay").attr("src",iconMedia.display);
+						$("#icon-onpause").attr("src",iconMedia.enapaus);
+						$("#icon-onstop").attr("src",iconMedia.enastop);				
+				},
+				playNext: function(){
+						if((ctrlAmiV.currentRow + 1) > ctrlAmiV.totalRow){
+							 $("#icon-onnext").attr("src",iconMedia.disnext);
+						} else {
+							 $("#icon-onnext").attr("src",iconMedia.enanext);
+						}				
+				},
+				playPrev: function(){
+						if((ctrlAmiV.currentRow - 1) <= 0){
+								$("#icon-onprev").attr("src",iconMedia.disprev);
+						} else {
+								$("#icon-onprev").attr("src",iconMedia.enaprev);
+						}				
+				},
+				clear: function(){
+						$("#icon-onplay").attr("src",iconMedia.display);
+						$("#icon-onpause").attr("src",iconMedia.dispaus);
+						$("#icon-onstop").attr("src",iconMedia.disstop);				
+				}
+				}	  	
+	  } 
 	  
-function onVoiceReset(rows_count){
-try {
-	if(AudioPlayer.isActiveX){
-		AmiAdvw.Reset();
-	} else {
-		AmiAdvw.reset();
-	}
-	AmiAdvw.setProperty("SelectedRangeOnLoaded",1);
-} catch(e){}        
-	AudioPlayer.buttons.init();
-	ctrlAmiV.totalRow = rows_count;
-	ctrlAmiV.currentRow = 0;
-	ctrlAmiV.audioSet = false;
-	setVolumeAndSpeed();
-}
+		function onVoiceReset(rows_count){
+		try {
+				if(AudioPlayer.isActiveX){
+						AmiAdvw.Reset();
+				} else {
+						AmiAdvw.reset();
+				}
+				AmiAdvw.setProperty("SelectedRangeOnLoaded",1);
+		} catch(e){}        
+				AudioPlayer.buttons.init();
+				ctrlAmiV.totalRow = rows_count;
+				ctrlAmiV.currentRow = 0;
+				ctrlAmiV.audioSet = false;
+				setVolumeAndSpeed();
+		}
     
-var selectedPlayingMode = 2;
+		var selectedPlayingMode = 2;
 		
-function forceToMono() {
-	try{
-		if (selectedPlayingMode == 1) {
-			AmiAdvw.ReChannel(1);
-			//AmiAdvw.SamplesPerSec = 16000;  
-			//AmiAdvw.Channels = 1;
-		} else {
-			AmiAdvw.ReChannel(2);
-			//AmiAdvw.SamplesPerSec = 8000;   
-			//AmiAdvw.Channels = 2;
-		}
-	} catch(e) {}
-}
+		function forceToMono() {
+			try{
+				if (selectedPlayingMode == 1) {
+					AmiAdvw.ReChannel(1);
+					//AmiAdvw.SamplesPerSec = 16000;  
+					//AmiAdvw.Channels = 1;
+				} else {
+					AmiAdvw.ReChannel(2);
+					//AmiAdvw.SamplesPerSec = 8000;   
+					//AmiAdvw.Channels = 2;
+				}
+			}catch(e){}
+    }
 		
-function swapMonoStereo() {
-	if (selectedPlayingMode == 1) {
-		selectedPlayingMode = 2;
-		$("#lb-filemode").html("Stereo");
-	} else {
-		selectedPlayingMode = 1;
-		$("#lb-filemode").html("Mono");
-	}
-}
-
-var Base64 = {
-	_keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-	decode: function(input) {
-		var output = "";
-		var chr1, chr2, chr3;
-		var enc1, enc2, enc3, enc4;
-		var i = 0;
-		input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-		while (i < input.length) {
-			enc1 = this._keyStr.indexOf(input.charAt(i++));
-			enc2 = this._keyStr.indexOf(input.charAt(i++));
-			enc3 = this._keyStr.indexOf(input.charAt(i++));
-			enc4 = this._keyStr.indexOf(input.charAt(i++));
-			chr1 = (enc1 << 2) | (enc2 >> 4);
-			chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-			chr3 = ((enc3 & 3) << 6) | enc4;
-			output = output + String.fromCharCode(chr1);
-			if (enc3 != 64) {
-				output = output + String.fromCharCode(chr2);
+		function swapMonoStereo() {
+			if (selectedPlayingMode == 1) {
+        selectedPlayingMode = 2;
+				$("#lb-filemode").html("Stereo");
+      } else {
+				selectedPlayingMode = 1;
+				$("#lb-filemode").html("Mono");
 			}
-			if (enc4 != 64) {
-				output = output + String.fromCharCode(chr3);
-			}
-		}
-		output = Base64._utf8_decode(output);
-		return output;
-	},
-
-	_utf8_decode: function(utftext) {
-		var string = "";
-		var i = 0;
-		var c = c1 = c2 = 0;
-		while (i < utftext.length) {
-			c = utftext.charCodeAt(i);
-			if (c < 128) {
-				string += String.fromCharCode(c);
-				i++;
-			}
-			else if ((c > 191) && (c < 224)) {
-				c2 = utftext.charCodeAt(i + 1);
-				string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-				i += 2;
-			}
-			else {
-				c2 = utftext.charCodeAt(i + 1);
-				c3 = utftext.charCodeAt(i + 2);
-				string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-				i += 3;
-			}
-		}
-		return string;
-	}
-}
-
-function decrypt(strIn){
-	var todel = [];
-	var n=0;
-	while (true){
-		var nn = n*(n+1)/2;
-		if (nn < strIn.length - n - 1){
-			todel.push(nn);
-			n++;
-		} else {
-			break;
-		}
-	}
-	todel.reverse();
-	arr=strIn.split("");
-	for(var i=0;i<todel.length;i++){
-		arr.splice(todel[i],1);
-	}
-	return arr.join("");
-}
-
-		function onVoiceLoad(row_no){
-			onVoiceStop();
+    }
+		
+		function onVoiceLoad(row_no){	
+			onVoiceStop();	
 			ctrlAmiV.audioSet = false;
 			ctrlAmiV.currentRow = parseInt(row_no);
 			$("#mytable tr").each(function(index){
 				var o = $(this);
 				if(parseInt(o.attr("row_no")) == ctrlAmiV.currentRow){
 					var audioUrl = o.attr("audiourl");
-					//alert(audioUrl);
-					//try { console.log(audioUrl); } catch(e){}
-					try {
-						audioUrl = decrypt(audioUrl);
-						audioUrl = Base64.decode(audioUrl);
-					} catch(e){
-						alert("error decode string. " + e.message);
-					}
-					//alert(audioUrl);
 					o.addClass("rowSelectedPlay");
 					try {
-						//try { console.log(audioUrl); } catch(e){}
 						if(AudioPlayer.isActiveX){
 							AmiAdvw.Reset();
 							AmiAdvw.LoadFromFile(audioUrl);

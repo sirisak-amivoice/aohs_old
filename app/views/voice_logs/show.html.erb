@@ -198,7 +198,81 @@
   } 
 
 </style>
+<script type="text/javascript">
+var Base64 = {
+	_keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+	decode: function(input) {
+		var output = "";
+		var chr1, chr2, chr3;
+		var enc1, enc2, enc3, enc4;
+		var i = 0;
+		input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+		while (i < input.length) {
+			enc1 = this._keyStr.indexOf(input.charAt(i++));
+			enc2 = this._keyStr.indexOf(input.charAt(i++));
+			enc3 = this._keyStr.indexOf(input.charAt(i++));
+			enc4 = this._keyStr.indexOf(input.charAt(i++));
+			chr1 = (enc1 << 2) | (enc2 >> 4);
+			chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+			chr3 = ((enc3 & 3) << 6) | enc4;
+			output = output + String.fromCharCode(chr1);
+			if (enc3 != 64) {
+				output = output + String.fromCharCode(chr2);
+			}
+			if (enc4 != 64) {
+				output = output + String.fromCharCode(chr3);
+			}
+		}
+		output = Base64._utf8_decode(output);
+		return output;
+	},
 
+	_utf8_decode: function(utftext) {
+		var string = "";
+		var i = 0;
+		var c = c1 = c2 = 0;
+		while (i < utftext.length) {
+			c = utftext.charCodeAt(i);
+			if (c < 128) {
+				string += String.fromCharCode(c);
+				i++;
+			}
+			else if ((c > 191) && (c < 224)) {
+				c2 = utftext.charCodeAt(i + 1);
+				string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+				i += 2;
+			}
+			else {
+				c2 = utftext.charCodeAt(i + 1);
+				c3 = utftext.charCodeAt(i + 2);
+				string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+				i += 3;
+			}
+		}
+		return string;
+	}
+}
+
+function decrypt(strIn){
+	var todel=[];
+	var n=0;
+	while (true){
+		var nn=n*(n+1)/2;
+		if (nn < strIn.length-n-1){
+			todel.push(nn);
+			n++;
+		}else{
+			break;
+		}
+	}
+	todel.reverse();
+	arr=strIn.split("")
+	for(var i=0;i<todel.length;i++){
+		arr.splice(todel[i],1);
+	}
+	return arr.join("");
+}
+</script>
 <script type="text/javascript">
 
   var current_pane = 1;
@@ -245,7 +319,6 @@
               label += "Start : <%= tc.start_time.strftime("%Y-%m-%d %H:%M:%S") %> <br/>";
               label += "Duration : <%= format_sec(tc.duration.to_i) %> <br/>";
           view += "<input class=\"radio-transf\" type=\"radio\" id=\"radio-<%= idx %>\" name=\"call-radio\" onclick=\"change_view("+c_idx+");\" disabled /><label style=\"text-align: left;\" for=\"radio-<%= idx %>\">"+label+"</label><br/>";
-
           call_information.push({
             id: "<%= tc.id %>",
             date: "<%= tc.start_time.strftime("%Y-%m-%d") %>",
@@ -265,7 +338,7 @@
             ext: "<%= tc.extension %>",
             ani: "<%= format_phone(tc.ani) %>",
             dnis: "<%= format_phone(tc.dnis) %>",
-            url: "<%= tc.voice_file_url %>"
+            url: "<%= encrypt_voice_url(Base64.encode64(tc.voice_file_url),tc.id).gsub("\n","\\n") %>"
           });
         <% end %>
     <% end %>
@@ -291,7 +364,7 @@
       var db = keyword_source[idx];
       $.getJSON("<%= url_for(:controller => 'keywords', :action => 'get_edit_keywords') %>", {voice_log_id: voice_id, db_name: db},
               function(data){
-				var data_len = data.length;
+				      var data_len = data.length;
                 if(data_len > 0){
                   var d_idx = 0;
                   while(d_idx < data_len){
@@ -369,8 +442,9 @@
 
     AmiAdvw.Reset();
     //AmiAdvw.SetProperty("SelectedRangeOnLoaded0", "0");
-    //AmiAdvw.SetProperty("SelectedRangeOnLoaded1", "320");   
-    AmiAdvw.LoadFromFile(call_information[current_call].url);
+    //AmiAdvw.SetProperty("SelectedRangeOnLoaded1", "320");
+		AmiAdvw.LoadFromFile(Base64.decode(decrypt(call_information[current_call].url)));
+    //AmiAdvw.LoadFromFile(call_information[current_call].url);
     AmiAdvw.ReChannel(1);
     setCallerInfo();
     refreshTag();
@@ -460,7 +534,7 @@
       ext: "<%= @voice_log.extension %>",
       ani: "<%= format_phone(@voice_log.ani) %>",
       dnis: "<%= format_phone(@voice_log.dnis) %>",
-      url: "<%= @voice_log.voice_file_url %>"
+      url: "<%= encrypt_voice_url(Base64.encode64(@voice_log.voice_file_url),@voice_log.id).gsub("\n","\\n") %>"
     });
   }
 
@@ -523,7 +597,7 @@
 
   var call_information;
 
-  var keyword_pattern = [<%= (@keyword_pattern.to_a.map { |k| "{id: \"#{k.id}\", name: \"#{k.name}\",type: \"#{k.keyword_type}\", group_id: #{k.group_id.to_i}, group_name: \"#{k.group_name}\"} "}).join(',') %>];
+  var keyword_pattern = [<%= (@keyword_pattern.to_a.map { |k| "{id: \"#{k.id}\", name: \"#{k.name}\",type: \"#{k.keyword_type}\", group_id: #{k.group_id.to_i}, group_name: \"#{k.group_name}\"} "}).join(',').html_safe %>];
   var keyword_source = ["result_keywords", "edit_keywords"];
   
   var voicelog_start_msec;

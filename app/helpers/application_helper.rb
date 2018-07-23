@@ -8,7 +8,28 @@ module ApplicationHelper
   $VOLUME_RANK = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.2,1.4,1.6,2.0,2.5,3.0,4.0,5.0,7.0,10.0]
   $SPEED_RANK = [0.5,0.6,0.8,1.0,1.2,1.4,1.6,1.8,2.0,2.2,2.4]
 
-   def get_web_root_url
+  def encrypt_voice_url(surl,key)
+    ourl = surl.clone
+    toinsert = []
+    n=0
+    while true
+      nn=n*(n+1)/2
+      if nn < surl.length
+        toinsert.push(nn)
+        n = n + 1
+      else
+        break
+      end
+    end
+    key_arr = key.to_s.scan(/./)
+    toinsert.each_with_index { |pos,idx|
+      str2insert = (str2insert.nil? ? "0" : key_arr[idx])
+      ourl.insert(pos,str2insert)
+    }
+    return ourl
+  end
+  
+  def get_web_root_url
      host_url = "http://#{request.host_with_port}"
      request_url = request.url.to_s.gsub(host_url,'')  
      unless params.blank?

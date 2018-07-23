@@ -112,6 +112,13 @@ class FavoritesController < ApplicationController
             :summary => true,
             :ctrl => ctrl})
 
+    voice_logs.each do |vl|
+      next if vl.nil?
+      next if vl[:path].nil? or vl[:id].nil?
+      vl[:path] = Base64.encode64(vl[:path])
+      vl[:path] = encrypt_voice_url(vl[:path], vl[:id])
+    end
+      
     @voice_logs_ds = { :data => voice_logs, :page_info => page_info, :summary => summary }
     
   end

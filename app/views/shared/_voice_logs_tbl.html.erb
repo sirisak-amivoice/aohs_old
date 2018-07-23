@@ -1,7 +1,7 @@
 <% content_for :header do %>
     <%= stylesheet_src_path '/jquery/jquery.contextMenu/jquery.contextMenu.css' %>
     <%= stylesheet_src_path '/jquery/jquery-tooltip/jquery.tooltip.css' %>
-		<%= stylesheet_src_path '/jquery/jquery.menu/menu.css' %>
+    <%= stylesheet_src_path '/jquery/jquery.menu/menu.css' %>
     <%= stylesheet_src_path 'voice_logs_table.css' %>
     <%= javascript_src_path '/jquery/jquery.menu/jquery.menu.js' %>
     <%= javascript_src_path '/jquery/jquery.contextMenu/jquery.contextMenu.js' %>
@@ -176,6 +176,25 @@
 			});
     }
 		
+      function bindRowEvent(){
+        $('ul.call-button li').unbind('click').click(function(e){
+            //e.preventDefault();
+            var ot = $(this);
+            var fns = ot.attr("data-onclick");
+            if((fns != undefined) && (fns.toString().length > 1)){
+                try {
+                    eval(fns);
+                } catch(ex){
+                    alert(ex.message);
+                }        
+                //setTimeout(fns,1);
+            }
+        });
+        $('div.btntrf').unbind('click').click(function(){
+            TransferButton(this);
+        });
+      }
+    
 	  function applyClickRow(){ }
 	  
 		function loadDataTable(data){
@@ -213,24 +232,32 @@
 
 		var expand_calls = "";
 		if (vc['trfc'] == true) {
-				expand_calls = "<div class='btntrf' btnstate=\"load\" onclick=\"TransferButton(this);\"><img src='<%= image_path('tree_icon/expand_icon2.gif') %>' alt='show transfer calls.'/></div>";
+				expand_calls = "<div class='btntrf' btnstate=\"load\" data-onclick=\"TransferButton(this);\"><img src='<%= image_path('tree_icon/expand_icon2.gif') %>' alt='show transfer calls.'/></div>";
 				found_tranfer = true;
 		}
 		var menu;
-    if((vc['open'] == true) || (vc['open'] == "true")){
+        if((vc['open'] == true) || (vc['open'] == "true")){
 		    <% if permission_by_name('voice_logs-download') %>
 			if((vc['duration'] != "00:00")){
-				menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li act='play' onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li><li act='more' onclick=\"voiceButton("+ vc['id'] +",'more')\"><img src='<%= image_path('detail.png') %>'/></li><li   title=\"Export\"  onclick=\"voiceDownload('"+ vc['id'] +"')\"><img src='<%= image_path('export.png') %>'/></li> <li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" onclick=\"voiceButton("+ vc['id'] +",'tool')\"><img src='<%= image_path('more.gif') %>'/></li></ul>";
+				menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li act='play' data-onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li>";
+                menu += "<li act='more' data-onclick=\"voiceButton("+ vc['id'] +",'more')\"><img src='<%= image_path('detail.png') %>'/></li>";
+                menu += "<li act='dl' title=\"Export\" data-onclick=\"voiceDownload('"+ vc['id'] +"')\"><img src='<%= image_path('export.png') %>'/></li>";
+                menu += "<li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" data-onclick=\"voiceButton("+ vc['id'] +",'tool');\"><img src='<%= image_path('more.gif') %>'/></li></ul>";
 			}else{
-				menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li act='play' onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li><li act='more' onclick=\"voiceButton("+ vc['id'] +",'more')\"><img src='<%= image_path('detail.png') %>'/></li><li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" onclick=\"voiceButton("+ vc['id'] +",'tool')\"><img src='<%= image_path('more.gif') %>'/></li></ul>";
+				menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li act='play' data-onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li>";
+                menu += "<li act='more' data-onclick=\"voiceButton("+ vc['id'] +",'more')\"><img src='<%= image_path('detail.png') %>'/></li>";
+                menu += "<li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" data-onclick=\"voiceButton("+ vc['id'] +",'tool')\"><img src='<%= image_path('more.gif') %>'/></li></ul>";
 			}
 		    <% else %>
-			menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li act='play' onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li><li act='more' onclick=\"voiceButton("+ vc['id'] +",'more')\"><img src='<%= image_path('detail.png') %>'/></li><li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" onclick=\"voiceButton("+ vc['id'] +",'tool')\"><img src='<%= image_path('more.gif') %>'/></li></ul>";
+			    menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li act='play' data-onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li>";
+                menu += "<li act='more' data-onclick=\"voiceButton("+ vc['id'] +",'more')\"><img src='<%= image_path('detail.png') %>'/></li>";
+                menu += "<li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" data-onclick=\"voiceButton("+ vc['id'] +",'tool')\"><img src='<%= image_path('more.gif') %>'/></li></ul>";
 		    <% end %>
 		} else {
 		    vc['path'] = "";
-		    menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li act='no-play'><img src='<%= image_path('speaker2.gif') %>'/></li><li act='no-more'><img src='<%= image_path('detail2.png') %>'/></li><li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"no-btntool myToolTip\"><img src='<%= image_path('more2.gif') %>'/></li></ul>";                  
-                }
+		    menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li act='no-play'><img src='<%= image_path('speaker2.gif') %>'/></li>";
+            menu += "<li act='no-more'><img src='<%= image_path('detail2.png') %>'/></li><li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"no-btntool myToolTip\"><img src='<%= image_path('more2.gif') %>'/></li></ul>";                  
+        }
 
 		row += "<tr class=\"" + rowCycle[rows_count % 2] + " " + redrow + " " + "myRow\" id=\"rowAt" + (id + 1) + "\" row_parent=\"0\" row_no=\"" + (id + 1) + "\" audiourl=\"" + vc['path'] + "\" duration_sec=\"" + vc['duration_sec'] + "\" play_offset_sec=\"" + vc['offset_sec'] + "\" onclick=\"highLightClickRow(this)\">";	
                 row += "<td width=\"40px\" class=\"no-item\"><div class=\"div-no\">" + number_with_delimiter(parseInt(vc['no'])) + "</div>" + expand_calls + "</td>";
@@ -241,7 +268,8 @@
 		else {
                     row += "<input type=\"hidden\" name=\"audioUrl-" + (id + 1) + "\" value=\"\">";
                 }
-                row += "<input type=\"hidden\" name=\"audioId-" + (id + 1) + "\" value=\"" + vc['id'] + "\">" + "<input type=\"hidden\" name=\"vc_id\" value=\"" + vc['id'] + "\">" + "<input type=\"hidden\" name=\"rowNo\" value=\"" + (id + 1) + "\">" + menu + "</td>";
+                row += "<input type=\"hidden\" name=\"audioId-" + (id + 1) + "\" value=\"" + vc['id'] + "\">" + "<input type=\"hidden\" name=\"vc_id\" value=\"" + vc['id'] + "\">" +
+                "<input type=\"hidden\" name=\"rowNo\" value=\"" + (id + 1) + "\">" + menu + "</td>";
                 row += "<td width=\"110px\" class=\"vc-date\">" + vc['sdate'] + "</td>";
                 row += "<td width=\"55px\" align=\"right\" class=\"vc-duration\">" + vc['duration']+"</td>";
                 row += "<td width=\"72px\" class=\"vc-ani\">" + vc['ani'] + "</td>";
@@ -282,7 +310,8 @@
         $('#rec-start').html(number_with_delimiter(parseInt(first_row)));
         $('#rec-end').html(number_with_delimiter(parseInt(first_row + rows_count)));
         resetTableStyle();
-				addBtnTransferCall(found_tranfer);		  
+				addBtnTransferCall(found_tranfer);
+                bindRowEvent();
 				progressEnabled(false); 
     }
 
@@ -345,20 +374,24 @@
 										<% if permission_by_name('voice_logs-download')%>
 										if((vc['duration'] != "00:00")){
 												menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li><img src='<%= image_path('padding2.png') %>'/></li>"+
-												"<li act='play' onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li>"+
-												"<li title=\"Export\"  onclick=\"window.open('"+ vc['path'] +"')\"><img src='<%= image_path('export.png') %>'/></li>"+
-												"<li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" onclick=\"voiceButton("+ vc['id'] +",'tool')\"><img src='<%= image_path('more.gif') %>'/></li></ul>";
+												"<li act='play' data-onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li>"+
+												"<li title=\"Export\" data-onclick=\"window.open('"+ vc['path'] +"')\"><img src='<%= image_path('export.png') %>'/></li>"+
+												"<li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" data-onclick=\"voiceButton("+ vc['id'] +",'tool')\"><img src='<%= image_path('more.gif') %>'/></li></ul>";
 										}else{
 												menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li><img src='<%= image_path('padding2.png') %>'/></li>"+
-												"<li act='play' onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li>"+
-												"<li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" onclick=\"voiceButton("+ vc['id'] +",'tool')\"><img src='<%= image_path('more.gif') %>'/></li></ul>";
+												"<li act='play' data-onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li>"+
+												"<li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" data-onclick=\"voiceButton("+ vc['id'] +",'tool')\"><img src='<%= image_path('more.gif') %>'/></li>"+
+                                                "</ul>";
 										}    
 										<% else %>
-												menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li><img src='<%= image_path('padding2.png') %>'/></li><li act='play' onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li><li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" onclick=\"voiceButton("+ vc['id'] +",'tool')\"><img src='<%= image_path('more.gif') %>'/></li></ul>";
+												menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li><img src='<%= image_path('padding2.png') %>'/></li>"+
+                                                "<li act='play' onclick=\"voiceButton("+ vc['id'] +",'play')\"><img src='<%= image_path('speaker.gif') %>'/></li>"+
+                                                "<li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"btntool myToolTip\" onclick=\"voiceButton("+ vc['id'] +",'tool')\"><img src='<%= image_path('more.gif') %>'/></li></ul>";
 										<% end %>
 								} else {
 										vc['path'] = "";
-										menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li><img src='<%= image_path('padding2.png') %>'/></li><li act='no-play'><img src='<%= image_path('speaker2.gif') %>'/></li><li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"no-btntool myToolTip\"><img src='<%= image_path('more2.gif') %>'/></li></ul>";                  
+										menu = "<ul class=\"call-button\" voice_id='" + vc['id'] + "'><li><img src='<%= image_path('padding2.png') %>'/></li><li act='no-play'><img src='<%= image_path('speaker2.gif') %>'/></li>"+
+                                        "<li act='tool' title=\"Tag - " + vc['tags'] + "\" class=\"no-btntool myToolTip\"><img src='<%= image_path('more2.gif') %>'/></li></ul>";                  
 								}				
 				
 								row += "<tr class=\"transf_call sub-" + rowCycle[rows_count % 2] + " " + redrow + " " + "myRow rowof" + row_parent_no + "\" id=\"rowAt" + row_no + "\" row_parent=\"" + row_no_prefix + "\" row_no=\"" + row_no + "\"  audiourl=\"" + vc['path'] + "\"" + "\">";
@@ -400,7 +433,8 @@
 						var objRow = o.parent().parent();
 						$(rows).insertAfter(objRow);
 						var objTranRow = $(".transf_call");
-						resetTableStyle(objTranRow);	
+						resetTableStyle(objTranRow);
+                        bindRowEvent();
 						progressEnabled(false);
 						o.html("<img src='<%= image_path('tree_icon/collapse-icon2.gif') %>'/>"); 	
 					
@@ -451,11 +485,11 @@
         }
 	  }
       
-		function voiceButton(id,act){
-				currentVoice = currentVoices[id];
-				callAction(act);          
-		}
-      
+	function voiceButton(id,act){
+        currentVoice = currentVoices[id];
+        callAction(act);          
+	}
+    
     function highLightClickRow(ele){
 		  	$("#mytable tr").removeClass('click');
 				$(ele).addClass('click');          
@@ -505,33 +539,34 @@
 		}
 	
 		function callAction(a){
-				switch (true){
-				case a=="play":
-					onVoiceLoad(parseInt(currentVoice.row));
-					break;
-				case a=="no-play":
-						//alert("You not have permission for this voice");
-					break;				
-				case a=="more": 
-						openCallDialog(currentVoice.id);
-					break;
-				case a=="no-more":
-						//alert("You not have permission for this voice");
-					break;				
-				case a=="load":
-						loadAudioFile(currentVoice.id); 
-					break;
-				case a=="addt": 
-					openAddTagDialog(currentVoice.id,currentVoice.row);
-					break;
-				case a=="remt":
-					removeTagDialog(currentVoice.id,currentVoice.row);
-					break;
-				case a=="editcust":
-				openCustomerDialog(currentVoice.id,currentVoice.row);	
-				  break;
-				default:
-					// not thing
+            switch (true){
+            case a=="play":
+                onVoiceLoad(parseInt(currentVoice.row));
+                break;
+            case a=="no-play":
+                    //alert("You not have permission for this voice");
+                break;				
+            case a=="more": 
+                    openCallDialog(currentVoice.id);
+                break;
+            case a=="no-more":
+                    //alert("You not have permission for this voice");
+                break;				
+            case a=="load":
+                    loadAudioFile(currentVoice.id); 
+                break;
+            case a=="addt": 
+                openAddTagDialog(currentVoice.id,currentVoice.row);
+                break;
+            case a=="remt":
+                removeTagDialog(currentVoice.id,currentVoice.row);
+                break;
+            case a=="editcust":
+                openCustomerDialog(currentVoice.id,currentVoice.row);	
+                break;
+            default:
+                // alert("invalid action code " + a);
+                // not thing
 			}
 		}
 	

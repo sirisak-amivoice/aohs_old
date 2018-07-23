@@ -337,6 +337,9 @@ module AmiCallSearch
 		end
 		
 		# joins/orders
+		if sc[:order].is_a?(String)
+      sc[:order] = sc[:order].to_s.split(",")
+		end
 		sc[:order].each do |order|
 			orderx = order.clone
 			case 0
@@ -458,7 +461,10 @@ module AmiCallSearch
 		joins << jsql unless jsql.empty?
 		
 		# joins/orders
-		[sc[:order]].each do |order|
+		if sc[:order].is_a?(String)
+      sc[:order] = sc[:order].to_s.split(",")
+		end
+		sc[:order].each do |order|
 			orderx = order.clone
 			case 0
 			when orderx =~ /(voice_log_counters)/
