@@ -249,10 +249,13 @@ function decrypt(strIn){
 					//alert(audioUrl);
 					//try { console.log(audioUrl); } catch(e){}
 					try {
+						if (audioUrl.match(/http/i)){
+							throw("audioUrl may not be encrypted.");
+						}
 						audioUrl = decrypt(audioUrl);
-						audioUrl = Base64.decode(audioUrl);
+						audioUrl = Base64.decode(audioUrl);						
 					} catch(e){
-						alert("error decode string. " + e.message);
+						console.log("error decode string. " + e.message);
 					}
 					//alert(audioUrl);
 					o.addClass("rowSelectedPlay");

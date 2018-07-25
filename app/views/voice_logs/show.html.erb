@@ -443,7 +443,17 @@ function decrypt(strIn){
     AmiAdvw.Reset();
     //AmiAdvw.SetProperty("SelectedRangeOnLoaded0", "0");
     //AmiAdvw.SetProperty("SelectedRangeOnLoaded1", "320");
-		AmiAdvw.LoadFromFile(Base64.decode(decrypt(call_information[current_call].url)));
+    var audioUrl = call_information[current_call].url;
+    try {
+      if (audioUrl.match(/http/i)){
+        throw("audioUrl may not be encrypted.");
+      }
+      audioUrl = decrypt(audioUrl);
+      audioUrl = Base64.decode(audioUrl);           
+    } catch(e){
+      console.log("error decode string. " + e.message);
+    }
+		AmiAdvw.LoadFromFile(audioUrl);
     //AmiAdvw.LoadFromFile(call_information[current_call].url);
     AmiAdvw.ReChannel(1);
     setCallerInfo();
