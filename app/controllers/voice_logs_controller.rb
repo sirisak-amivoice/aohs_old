@@ -532,11 +532,11 @@ class VoiceLogsController < ApplicationController
      transfer_voice_logs.each {|vl|        
       p "xxxxxxxxxxxxxxxxxxxx"
       p vl
-        if (not vl.nil?) and (not vl[:path].nil?) and (not vl[:id].nil?)
-          vl[:path] = Base64.encode64(vl[:path])
-          vl[:path] = encrypt(vl[:path], vl[:id])
-        end
-      }
+        next if vl.nil?
+        next if vl[:path].nil? or vl[:id].nil?
+        vl[:path] = Base64.encode64(vl[:path])
+        vl[:path] = encrypt_voice_url(vl[:path], vl[:id])
+    }
      
      render :json => transfer_voice_logs, :layout => false
      
