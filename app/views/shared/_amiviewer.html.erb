@@ -247,7 +247,6 @@ function decrypt(strIn){
 				if(parseInt(o.attr("row_no")) == ctrlAmiV.currentRow){
 					var audioUrl = o.attr("audiourl");
 					//alert(audioUrl);
-					//try { console.log(audioUrl); } catch(e){}
 					try {
 						if (audioUrl.match(/http/i)){
 							throw("audioUrl may not be encrypted.");
@@ -260,7 +259,6 @@ function decrypt(strIn){
 					//alert(audioUrl);
 					o.addClass("rowSelectedPlay");
 					try {
-						//try { console.log(audioUrl); } catch(e){}
 						if(AudioPlayer.isActiveX){
 							AmiAdvw.Reset();
 							AmiAdvw.LoadFromFile(audioUrl);

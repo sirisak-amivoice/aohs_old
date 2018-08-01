@@ -247,11 +247,13 @@ class VoiceLogsController < ApplicationController
 				voice_logs = []
 			end
 
-      voice_logs.each do |vl|
+      voice_logs.each_with_index do |vl, idx|
         next if vl.nil?
         next if vl[:path].nil? or vl[:id].nil?
-        vl[:path] = Base64.encode64(vl[:path])
-        vl[:path] = encrypt_voice_url(vl[:path], vl[:id])
+        enc_url = voice_logs[idx][:path]
+        enc_url = Base64.encode64(enc_url)
+        enc_url = encrypt_voice_url(enc_url, vl[:id])
+        voice_logs[idx][:path] = enc_url
       end
 
 			@voice_logs_ds = {:data => voice_logs, :page_info => page_info,:summary => summary }			
