@@ -249,7 +249,7 @@ function decrypt(strIn){
 					//alert(audioUrl);
 					try {
 						if (audioUrl.match(/http/i)){
-							throw("audioUrl may not be encrypted.");
+							throw new Error("audioUrl may not be encrypted.");
 						}
 						audioUrl = decrypt(audioUrl);
 						audioUrl = Base64.decode(audioUrl);						
