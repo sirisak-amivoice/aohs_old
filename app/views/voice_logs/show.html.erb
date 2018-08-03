@@ -473,7 +473,9 @@ function decrypt(strIn){
 
     resize_edit_content();
     
-    setPlayOffset(call_information[current_call].strsec,call_information[current_call].dur_sec);
+    if ( call_information[current_call].strsec < call_information[current_call].dur_sec ) {
+      setPlayOffset(call_information[current_call].strsec,call_information[current_call].dur_sec);
+    }
 
   }
 
